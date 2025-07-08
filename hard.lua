@@ -185,7 +185,7 @@ function ChangeStyle(room,Modifed)
 		return
 	end
 	--Change Light Model
-	for i,v in pairs(room.Assets.LightStand.Light_Fixtures:GetDescendants()) do
+	for i,v in pairs(room.Assets.LightStand.LightFixtures:GetDescendants()) do
 		if v.Name == "LightStand" then
 			if game.ReplicatedStorage.GameData.LatestRoom.Value < 51 then
 				local torch = LightReplaceModel:Clone()
