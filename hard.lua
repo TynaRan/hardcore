@@ -25,7 +25,7 @@ local v10 = 15
 local v11 = 10
 local v12 = 3
 local v13 = false
-local v42 = 8
+local v42 = 15
 local v43 = nil
 
 local v14 = Instance.new("ScreenGui")
@@ -132,7 +132,7 @@ v4.Heartbeat:Connect(function(v57)
         if v8 then
             if v58 then
                 v7 = math.max(0, v7 - v10 * v57)
-                v53.WalkSpeed = 22
+                v53.WalkSpeed = 21
             else
                 v7 = math.min(v6, v7 + v11 * v57)
             end
@@ -205,12 +205,13 @@ function ChangeStyle(room,Modifed)
 	--FUNCTIONEND
 end
 ChangeStyle(roomlatestworkspace)
-for i,v in pairs(game.ReplicatedStorage.Misc.Eyes:GetDescendants()) do
-	if v.Name == "Eye" then
-		v:FindFirstChild("Part").Decal.Texture = "rbxassetid://1882220622"
-		v:FindFirstChild("Eye").Name = "KYS"
-	end
+coroutine.wrap(function()
+while true do
+game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
+			
+ChangeStyle(roomlatestworkspace)
 end
+end)()
 game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function(v)
 	L = game:GetService("Workspace").CurrentRooms[v].PathfindNodes:Clone()
 	L.Parent = game:GetService("Workspace").CurrentRooms[v]
