@@ -185,11 +185,11 @@ function ChangeStyle(room,Modifed)
 		return
 	end
 	--Change Light Model
-	for i,v in pairs(room.Assets.Light_Fixtures:GetDescendants()) do
+	for i,v in pairs(room.Assets.LightStand.Light_Fixtures:GetDescendants()) do
 		if v.Name == "LightStand" then
 			if game.ReplicatedStorage.GameData.LatestRoom.Value < 51 then
 				local torch = LightReplaceModel:Clone()
-				torch.Parent = room.Assets.Light_Fixtures
+				torch.Parent = room.Assets.LightStand.LightFixtures
 				torch.LightFixture.PointLight.Changed:Connect(function()
 					torch.LightFixture.Neon.atachm["Ok you cannot tell me this isnt good"].Enabled = torch.LightFixture.PointLight.Enabled
 					torch.LightFixture.Neon["Bright sh idfk"].ParticleEmitter.Enabled = torch.LightFixture.PointLight.Enabled
