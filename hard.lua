@@ -2,15 +2,173 @@ local Beans = false
 local Bravo = false
 local LightReplaceModel = game:GetObjects("rbxassetid://12543866876")[1] or nil
 local BookcaseReplaceModel = nil
-local v8 = game:GetService("ReplicatedStorage").Sounds:FindFirstChild("LA_The Garden");
-function PreloadSounds(msg,Soundid)
-	if not game:GetService("ReplicatedStorage").Sounds:FindFirstChild("LA_"..msg) then
-		Sound = v8:Clone()
-		Sound.SoundId = Soundid
-		Sound.Parent = game:GetService("ReplicatedStorage").Sounds
-		Sound.Name ='LA_'..msg
-	end
+--local v8 = game:GetService("ReplicatedStorage").Sounds:FindFirstChild("LA_The Garden");
+--function PreloadSounds(msg,Soundid)
+--	if not game:GetService("ReplicatedStorage").Sounds:FindFirstChild("LA_"..msg) then
+--		Sound = v8:Clone()
+--		Sound.SoundId = Soundid
+--		Sound.Parent = game:GetService("ReplicatedStorage").Sounds
+--		Sound.Name ='LA_'..msg
+--	end
+--end
+local v1 = game:GetService("Players").LocalPlayer
+local v2 = v1:WaitForChild("PlayerGui")
+local v3 = game:GetService("UserInputService")
+local v4 = game:GetService("RunService")
+local v5 = game:GetService("SoundService")
+
+local v6 = 100
+local v7 = v6
+local v8 = false
+local v9 = true
+local v10 = 15
+local v11 = 10
+local v12 = 3
+local v13 = false
+local v42 = 8
+local v43 = nil
+
+local v14 = Instance.new("ScreenGui")
+v14.Name = "StaminaGui"
+v14.Parent = v2
+v14.Enabled = true
+v14.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local v15 = Instance.new("TextButton")
+v15.Name = "SprintButton"
+v15.Parent = v14
+v15.AnchorPoint = Vector2.new(1,0.5)
+v15.BackgroundColor3 = Color3.fromRGB(255,255,255)
+v15.BackgroundTransparency = 1.000
+v15.Position = UDim2.new(0.98,0,0.5,0)
+v15.Size = UDim2.new(0.08,0,0.08,0)
+v15.ZIndex = 1005
+v15.Text = ""
+
+local v19 = Instance.new("Frame")
+v19.Name = "Bar"
+v19.Parent = v14
+v19.AnchorPoint = Vector2.new(1,0.5)
+v19.BackgroundColor3 = Color3.fromRGB(56,46,39)
+v19.BackgroundTransparency = 0.700
+v19.Position = UDim2.new(0.98,0,0.6,0)
+v19.Size = UDim2.new(0.3,0,0.04,0)
+v19.ZIndex = 0
+
+local v22 = Instance.new("Frame")
+v22.Name = "Fill"
+v22.Parent = v19
+v22.AnchorPoint = Vector2.new(0,0.5)
+v22.BackgroundColor3 = Color3.fromRGB(213,185,158)
+v22.Position = UDim2.new(0,0,0.5,0)
+v22.Size = UDim2.new(1,0,1,0)
+v22.ZIndex = 2
+
+local v24 = Instance.new("TextLabel")
+v24.Name = "StaminaText"
+v24.Parent = v15
+v24.AnchorPoint = Vector2.new(0.5,0.5)
+v24.BackgroundTransparency = 1
+v24.Position = UDim2.new(0.5,0,0.5,0)
+v24.Size = UDim2.new(1,0,1,0)
+v24.Text = "SPRINT"
+v24.TextColor3 = Color3.fromRGB(255,255,255)
+v24.TextScaled = true
+v24.Font = Enum.Font.Oswald
+v24.ZIndex = 1006
+
+local function UpdateStamina()
+    local v45 = v7/v6
+    v22.Size = UDim2.new(v45,0,1,0)
+    --v24.Text = "SPRINT: "..math.floor(v45*100).."%"
 end
+
+local function ToggleSprint()
+    if v7 > 5 and not v8 and not v13 then
+        v8 = true
+        if v43 then
+            v43:Disconnect()
+            v43 = nil
+        end
+    else
+        v8 = false
+        if not v43 then
+            v43 = hookmetamethod(game, "__namecall", function(...)
+                local v47, v48 = ...
+                if v48 == "WalkSpeed" and getnamecallmethod() == "setWalkSpeed" then
+                    return nil
+                end
+                return v43(...)
+            end)
+        end
+    end
+end
+
+v15.MouseButton1Click:Connect(function()
+    ToggleSprint()
+end)
+
+local v53 = v1.Character and v1.Character:FindFirstChildOfClass("Humanoid")
+
+if not v53 then
+    v1.CharacterAdded:Connect(function(v54)
+        v53 = v54:WaitForChild("Humanoid")
+        v53.WalkSpeed = v42
+    end)
+end
+
+v43 = hookmetamethod(game, "__namecall", function(...)
+    local v55, v56 = ...
+    if v56 == "WalkSpeed" and getnamecallmethod() == "setWalkSpeed" then
+        return nil
+    end
+    return v43(...)
+end)
+
+v4.Heartbeat:Connect(function(v57)
+    if v53 then
+        local v58 = v53.MoveDirection.Magnitude > 0
+        
+        if v8 then
+            if v58 then
+                v7 = math.max(0, v7 - v10 * v57)
+                v53.WalkSpeed = 22
+            else
+                v7 = math.min(v6, v7 + v11 * v57)
+            end
+            
+            if v7 <= 0 then
+                if not v13 then
+		    require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("You Feel Exhausted.",true)
+                    local v59 = Instance.new("Sound")
+                    v59.SoundId = "rbxassetid://8258601891"
+                    v59.Volume = 0.8
+                    v59.PlayOnRemove = true
+                    v59.Parent = workspace
+                    v59:Destroy()
+                    v13 = true
+                    task.delay(v12, function()
+                        v13 = false
+                    end)
+                end
+                ToggleSprint()
+                v53.WalkSpeed = v42
+            end
+        else
+            v53.WalkSpeed = v42
+            if v9 and v7 < v6 and not v8 then
+                if not v58 then
+                    v7 = math.min(v6, v7 + v11 * v57)
+                end
+            end
+        end
+        
+        UpdateStamina()
+    end
+end)
+
+UpdateStamina()
+if v53 then v53.WalkSpeed = v42 end
 game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.SoundId = "rbxassetid://10472612727"
 game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game.Health.Music.Blue.Pitch = 0.55
 local latestroom = game.ReplicatedStorage.GameData.LatestRoom.Value
@@ -90,6 +248,7 @@ replaceSeekMusic("https://github.com/Sosnen/Ping-s-Dumbass-projects-/blob/main/H
 wait(0.01)
 end
 end)()
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Hardcore Original Init",true)
 game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
 coroutine.wrap(function()
     local p = game.Players.LocalPlayer
@@ -200,3 +359,7 @@ coroutine.wrap(function()
         end
     end
 end)()
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("Original: noonie#0001 Ping#1841 and Noah other ",true)
+wait(2)
+
+require(game.Players.LocalPlayer.PlayerGui.MainUI.Initiator.Main_Game).caption("LOL",true)
