@@ -205,19 +205,14 @@ function ChangeStyle(room,Modifed)
 	--FUNCTIONEND
 end
 ChangeStyle(roomlatestworkspace)
-coroutine.wrap(function()
-while true do
-game.ReplicatedStorage.GameData.LatestRoom.Changed:Wait()
-			
-ChangeStyle(roomlatestworkspace)
-end
-end)()
 game:GetService("ReplicatedStorage").GameData.LatestRoom.Changed:Connect(function(v)
 	L = game:GetService("Workspace").CurrentRooms[v].PathfindNodes:Clone()
 	L.Parent = game:GetService("Workspace").CurrentRooms[v]
 	L = game:GetService("Workspace").CurrentRooms[v].PathfindNodes:Clone()
 	L.Parent = game:GetService("Workspace").CurrentRooms[v]
 	L.Name = 'Nodes'
+	local LightReplaceModel = game:GetObjects("rbxassetid://12543866876")[1] or nil
+        ChangeStyle(roomlatestworkspace)
 end)
 local function ReplaceAudGit(GithubSnd,SoundName)
 local url=GithubSnd
